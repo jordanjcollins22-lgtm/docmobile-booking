@@ -13,6 +13,9 @@
       email: "book@docmobileauto.com",  // TODO: real email
       serviceArea: "Mobile service: we come to you", // TODO: real area
       facebook: "https://www.facebook.com/docautodetailing",
+      // Paste a Google Maps API key (Places API (New) enabled, restricted to your domain)
+      // for accurate address suggestions. Leave empty to use the free OpenStreetMap search.
+      googleMapsKey: "",
     },
 
     // Services the customer already knows they need (estimate = parts + labor, placeholder)

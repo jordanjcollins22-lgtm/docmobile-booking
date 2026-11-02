@@ -372,9 +372,11 @@
   $("#services").innerHTML = P.services.map(function (s) { return opt("checkbox", "services", s); }).join("");
   $("#addons").innerHTML = P.addons.map(function (s) { return opt("checkbox", "addons", s); }).join("");
 
-  // Address autocomplete (free OpenStreetMap search via Photon; no API key needed)
+  // Address autocomplete. Uses Google Places when a key is set in pricing.js (best US accuracy),
+  // otherwise the free Photon / OpenStreetMap search.
   (function () {
     var input = form.elements.street, list = $("#acList"), items = [], active = -1, timer, last = "", ctrl;
+    var GKEY = String(B.googleMapsKey || "").trim(), gReady = null, token = null;
     var ST = { Alabama:"AL", Alaska:"AK", Arizona:"AZ", Arkansas:"AR", California:"CA", Colorado:"CO", Connecticut:"CT", Delaware:"DE",
       "District of Columbia":"DC", Florida:"FL", Georgia:"GA", Hawaii:"HI", Idaho:"ID", Illinois:"IL", Indiana:"IN", Iowa:"IA", Kansas:"KS",
       Kentucky:"KY", Louisiana:"LA", Maine:"ME", Maryland:"MD", Massachusetts:"MA", Michigan:"MI", Minnesota:"MN", Mississippi:"MS",
@@ -387,25 +389,70 @@
       if (!items.length) return close();
       list.innerHTML = items.map(function (a, i) {
         return '<li role="option" data-i="' + i + '" aria-selected="' + (i === active) + '">' + a.line1.replace(/</g, "&lt;") +
-          "<small>" + [a.city, a.state, a.zip].filter(Boolean).join(", ").replace(/</g, "&lt;") + "</small></li>";
-      }).join("") + '<li class="src" aria-hidden="true">Suggestions © OpenStreetMap</li>';
+          "<small>" + (a.sub || [a.city, a.state, a.zip].filter(Boolean).join(", ")).replace(/</g, "&lt;") + "</small></li>";
+      }).join("") + '<li class="src" aria-hidden="true">' + (GKEY ? "Powered by Google" : "Suggestions © OpenStreetMap") + "</li>";
       list.hidden = false; input.setAttribute("aria-expanded", "true");
     }
     function pick(i) {
       var a = items[i]; if (!a) return;
+      if (a.pred) return pickGoogle(a);
+      fill(a);
+    }
+    function fill(a) {
       input.value = a.line1; form.city.value = a.city; form.state.value = a.state; form.zip.value = a.zip;
       $$("[data-req]", $('[data-panel="0"]')).forEach(function (l) { l.classList.remove("invalid"); });
       close(); save(); form.unit.focus();
     }
+    function loadGoogle() {
+      if (gReady) return gReady;
+      gReady = new Promise(function (res, rej) {
+        window.__docmobileMaps = res;
+        var sc = document.createElement("script");
+        sc.src = "https://maps.googleapis.com/maps/api/js?key=" + encodeURIComponent(GKEY) + "&libraries=places&loading=async&callback=__docmobileMaps";
+        sc.async = true; sc.onerror = rej; document.head.appendChild(sc);
+      });
+      return gReady;
+    }
+    function searchGoogle(q) {
+      loadGoogle().then(function () {
+        var pl = google.maps.places;
+        if (!token) token = new pl.AutocompleteSessionToken();
+        return pl.AutocompleteSuggestion.fetchAutocompleteSuggestions({ input: q, includedRegionCodes: ["us"], sessionToken: token });
+      }).then(function (r) {
+        items = (r.suggestions || []).filter(function (s) { return s.placePrediction; }).slice(0, 5).map(function (s) {
+          var p = s.placePrediction;
+          return { pred: p, line1: p.mainText ? p.mainText.text : p.text.text, sub: p.secondaryText ? p.secondaryText.text : "" };
+        });
+        active = -1; if (document.activeElement === input) render();
+      }).catch(function (e) { if (window.console) console.warn("Address lookup failed", e); });
+    }
+    function pickGoogle(a) {
+      close(); input.value = a.line1;
+      var place = a.pred.toPlace(); token = null;
+      place.fetchFields({ fields: ["addressComponents"] }).then(function () {
+        var c = {}; (place.addressComponents || []).forEach(function (x) { (x.types || []).forEach(function (t) { c[t] = x; }); });
+        var g = function (t, short) { return c[t] ? (short ? c[t].shortText : c[t].longText) || "" : ""; };
+        fill({
+          line1: [g("street_number"), g("route")].filter(Boolean).join(" ") || a.line1,
+          city: g("locality") || g("sublocality") || g("postal_town") || g("administrative_area_level_3") || g("neighborhood"),
+          state: g("administrative_area_level_1", true),
+          zip: g("postal_code"),
+        });
+      }).catch(function () { form.city.focus(); });
+    }
     function search(q) {
+      if (GKEY) return searchGoogle(q);
       if (ctrl) ctrl.abort(); ctrl = window.AbortController ? new AbortController() : null;
-      var url = "https://photon.komoot.io/api/?limit=8&lang=en&layer=house&layer=street&q=" + encodeURIComponent(q);
+      var url = "https://photon.komoot.io/api/?limit=10&lang=en&q=" + encodeURIComponent(q);
       fetch(url, ctrl ? { signal: ctrl.signal } : {}).then(function (r) { return r.json(); }).then(function (j) {
         var seen = {};
         items = (j.features || []).map(function (f) { return f.properties || {}; })
-          .filter(function (p) { return p.countrycode === "US" && (p.street || p.name); })
+          .filter(function (p) { return p.countrycode === "US" && (p.street || p.type === "street"); })
           .map(function (p) {
-            var line1 = p.housenumber ? p.housenumber + " " + (p.street || p.name) : (p.street || p.name);
+            // If OSM has no house number here, keep the number the customer typed
+            var num = p.housenumber || (q.match(/^\s*(\d+[a-z]?)\s/i) || [])[1] || "";
+            var road = p.type === "street" ? p.name : (p.street || p.name);
+            var line1 = (num ? num + " " : "") + road;
             return { line1: line1, city: p.city || p.town || p.village || p.district || p.county || "", state: ST[p.state] || p.state || "", zip: (p.postcode || "").slice(0, 10) };
           })
           .filter(function (a) { var k = a.line1 + a.city + a.zip; if (seen[k]) return false; seen[k] = 1; return true; })
