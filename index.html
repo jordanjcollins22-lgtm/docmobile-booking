@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DocMobile Auto Solutions</title>
+<meta name="description" content="Licensed & insured, ASE-certified mobile mechanic. Book a repair or a $120 diagnosis visit and we come to you.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Inter:ital,wght@0,400;0,500;0,600;0,800;1,800&display=swap" rel="stylesheet">
+<style>
+  /* Brand: black, white, and DocMobile gold (#F5C542) */
+  :root {
+    --bg: #f3f3f1;
+    --surface: #ffffff;
+    --surface-2: #f0efea;
+    --ink: #111214;
+    --ink-2: #51545a;
+    --line: #dcdbd5;
+    --accent: #f5c542;       /* gold fill */
+    --accent-ink: #111214;   /* text on gold */
+    --accent-text: #8a6500;  /* gold used as text on light bg */
+    --accent-soft: #fdf4d6;
+    --hero: #0d0e10;
+    --hero-ink: #f4f4f2;
+    --danger: #c0352b;
+    --ok: #1d8a4e;
+    --radius: 14px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0b0c0e; --surface: #16171a; --surface-2: #1e2024; --ink: #f1f1ef; --ink-2: #a7a9ae;
+      --line: #2c2e33; --accent: #f5c542; --accent-ink: #111214; --accent-text: #f5c542; --accent-soft: #2b2512;
+      --hero: #050506; --hero-ink: #f4f4f2; --danger: #ef6a5f; --ok: #4cc283;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0b0c0e; --surface: #16171a; --surface-2: #1e2024; --ink: #f1f1ef; --ink-2: #a7a9ae;
+    --line: #2c2e33; --accent: #f5c542; --accent-ink: #111214; --accent-text: #f5c542; --accent-soft: #2b2512;
+    --hero: #050506; --hero-ink: #f4f4f2; --danger: #ef6a5f; --ok: #4cc283;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 Inter, system-ui, sans-serif; }
+  h1, h2, .brand { font-family: "Barlow Condensed", Inter, sans-serif; letter-spacing: .01em; }
+
+  header.hero {
+    color: var(--hero-ink); padding: 18px 16px 76px;
+    background: linear-gradient(180deg, rgba(5,5,6,.9), rgba(5,5,6,.97)), url("assets/banner.jpg") center / cover, var(--hero);
+  }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: Inter, sans-serif; font-style: italic; font-weight: 800; font-size: 24px; letter-spacing: -.02em; line-height: 1; }
+  .brand .plus { width: 26px; height: 26px; flex: none; }
+  .brand small { display: block; font-style: normal; font-weight: 500; font-size: 9.5px; letter-spacing: .22em; text-transform: uppercase; opacity: .85; margin-top: 4px; }
+  .topbar a { color: var(--accent); font-weight: 600; text-decoration: none; font-size: 14px; white-space: nowrap; }
+  .hero h1 { font-size: clamp(36px, 7.5vw, 56px); line-height: 1; margin: 34px 0 12px; text-transform: uppercase; }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero p { margin: 0; color: #c4c5c8; max-width: 520px; }
+  .trust { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; padding: 0; list-style: none; }
+  .trust li { font-size: 13px; font-weight: 600; padding: 6px 11px; border-radius: 99px; border: 1px solid rgba(245,197,66,.45); color: #f4f4f2; background: rgba(245,197,66,.08); }
+  .trust li::before { content: "✓ "; color: var(--accent); }
+
+  main { padding: 0 16px 48px; margin-top: -48px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); box-shadow: 0 10px 30px rgba(0,0,0,.08); }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--line); }
+  .steps button { all: unset; cursor: default; padding: 14px 6px 12px; text-align: center; font-size: 13px; font-weight: 600; color: var(--ink-2); border-bottom: 3px solid transparent; }
+  .steps button .n { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: var(--surface-2); margin-right: 6px; font-size: 12px; }
+  .steps button.done { color: var(--ink); cursor: pointer; }
+  .steps button.done .n { background: var(--ok); color: #fff; }
+  .steps button.active { color: var(--ink); border-bottom-color: var(--accent); }
+  .steps button.active .n { background: var(--accent); color: var(--accent-ink); }
+  @media (max-width: 520px) { .steps .lbl { display: none; } .steps button .n { margin: 0; } }
+
+  form { padding: 22px 20px 20px; }
+  @media (min-width: 600px) { form { padding: 28px 32px 28px; } }
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .panel { display: none; }
+  .panel.on { display: block; }
+  h2 { font-size: 28px; margin: 0 0 4px; text-transform: uppercase; }
+  .sub { color: var(--ink-2); margin: 0 0 20px; font-size: 15px; }
+  .grid { display: grid; gap: 14px; grid-template-columns: 1fr; }
+  @media (min-width: 600px) { .g2 { grid-template-columns: 1fr 1fr; } .g3 { grid-template-columns: 2fr 1fr 1fr; } }
+  label.f { display: block; font-size: 14px; font-weight: 600; }
+  label.f .opt { font-weight: 400; color: var(--ink-2); }
+  input[type=text], input[type=tel], input[type=email], input[type=date], input[type=number], select, textarea {
+    width: 100%; margin-top: 6px; padding: 12px 12px; font: inherit; color: var(--ink);
+    background: var(--surface); border: 1px solid var(--line); border-radius: 10px; min-height: 46px;
+  }
+  textarea { min-height: 84px; resize: vertical; }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: var(--accent); }
+  .invalid input, .invalid select, .invalid textarea { border-color: var(--danger); }
+  .err { color: var(--danger); font-size: 13px; margin-top: 4px; display: none; }
+  .invalid .err { display: block; }
+  .section-h { font-weight: 700; font-size: 15px; margin: 24px 0 10px; }
+  .section-h .opt { font-weight: 400; color: var(--ink-2); }
+
+  .choices { display: grid; gap: 10px; grid-template-columns: 1fr; }
+  @media (min-width: 600px) { .choices.c2 { grid-template-columns: 1fr 1fr; } .choices.c3 { grid-template-columns: repeat(3, 1fr); } }
+  .choice { position: relative; display: flex; gap: 12px; align-items: flex-start; padding: 13px 14px; border: 1px solid var(--line); border-radius: 12px; cursor: pointer; background: var(--surface); }
+  .choice input { margin: 3px 0 0; accent-color: var(--accent); width: 18px; height: 18px; flex: none; }
+  .choice:has(input:checked) { border-color: var(--accent); background: var(--accent-soft); box-shadow: 0 0 0 1px var(--accent) inset; }
+  .choice .t { font-weight: 600; display: block; }
+  .choice .d { color: var(--ink-2); font-size: 13px; display: block; }
+  .choice .p { margin-left: auto; font-weight: 700; white-space: nowrap; padding-left: 8px; }
+  .choice.disabled { opacity: .5; cursor: not-allowed; }
+
+  .estimate { margin-top: 20px; padding: 14px 16px; border-radius: 12px; background: var(--surface-2); display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .estimate .big { font-family: "Barlow Condensed", sans-serif; font-size: 30px; font-weight: 700; line-height: 1; }
+  .estimate small { color: var(--ink-2); display: block; }
+
+  .pay { display: grid; gap: 12px; }
+  .pay .choice { padding: 16px; }
+  .pay .amt { font-family: "Barlow Condensed", sans-serif; font-size: 28px; font-weight: 700; line-height: 1; margin-left: auto; padding-left: 10px; }
+  .badge[hidden] { display: none; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; padding: 2px 7px; border-radius: 99px; background: var(--accent); color: var(--accent-ink); margin-left: 6px; vertical-align: 2px; }
+
+  .summary { border: 1px solid var(--line); border-radius: 12px; padding: 4px 16px; margin-bottom: 18px; }
+  .summary div { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+  .summary div:last-child { border-bottom: 0; }
+  .summary dt { color: var(--ink-2); width: 92px; flex: none; }
+  .summary dd { margin: 0; flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .summary a { color: var(--accent); font-size: 13px; cursor: pointer; text-decoration: underline; background: none; border: 0; padding: 0; font: inherit; font-size: 13px; }
+
+  .check { display: flex; gap: 10px; align-items: flex-start; margin-top: 16px; font-size: 14px; color: var(--ink-2); }
+  .check input { margin-top: 3px; accent-color: var(--accent); width: 18px; height: 18px; flex: none; }
+
+  .nav { display: flex; gap: 10px; margin-top: 26px; }
+  .btn { font: inherit; font-weight: 600; border-radius: 10px; padding: 14px 20px; min-height: 50px; cursor: pointer; border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); flex: 1; font-size: 17px; }
+  .btn.primary:disabled { opacity: .6; cursor: wait; }
+  .formerr { color: var(--danger); font-size: 14px; margin-top: 12px; display: none; }
+  .note { font-size: 13px; color: var(--ink-2); margin-top: 12px; text-align: center; }
+
+  .done-panel { padding: 40px 24px; text-align: center; }
+  .done-panel .icon { width: 64px; height: 64px; border-radius: 50%; background: var(--ok); color: #fff; display: grid; place-items: center; font-size: 34px; margin: 0 auto 16px; }
+
+  footer { text-align: center; color: var(--ink-2); font-size: 13px; padding: 0 16px 32px; }
+  footer a { color: inherit; }
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <svg class="plus" viewBox="0 0 26 26" aria-hidden="true"><path fill="#f5c542" d="M9 1h8v8h8v8h-8v8H9v-8H1V9h8z"/></svg>
+        <span>DocMobile<small>Auto Solutions LLC</small></span>
+      </div>
+      <a id="phoneLink" href="#">Call / Text</a>
+    </div>
+    <h1>The mechanic<br><em>comes to you.</em></h1>
+    <p>Repairs, maintenance, and diagnostics in your driveway or at work. Tell us what's going on and lock in your spot in about two minutes.</p>
+    <ul class="trust">
+      <li>ASE Certified</li>
+      <li>Licensed &amp; insured</li>
+      <li>Mobile service</li>
+    </ul>
+  </div>
+</header>
+
+<main>
+  <div class="wrap card" id="app">
+    <nav class="steps" id="steps" aria-label="Booking steps">
+      <button type="button" data-step="0"><span class="n">1</span><span class="lbl">Address</span></button>
+      <button type="button" data-step="1"><span class="n">2</span><span class="lbl">Contact</span></button>
+      <button type="button" data-step="2"><span class="n">3</span><span class="lbl">Your car</span></button>
+      <button type="button" data-step="3"><span class="n">4</span><span class="lbl">Payment</span></button>
+    </nav>
+
+    <form id="form" novalidate>
+      <!-- STEP 1: ADDRESS -->
+      <fieldset class="panel" data-panel="0">
+        <h2>Where's the car?</h2>
+        <p class="sub">We're mobile. Give us the address where we'll do the work.</p>
+        <div class="grid">
+          <label class="f" data-req>Street address
+            <input type="text" name="street" autocomplete="address-line1" placeholder="123 Main St">
+            <span class="err">Enter the street address.</span></label>
+          <label class="f">Apt / unit / gate code <span class="opt">(optional)</span>
+            <input type="text" name="unit" autocomplete="address-line2"></label>
+          <div class="grid g3">
+            <label class="f" data-req>City
+              <input type="text" name="city" autocomplete="address-level2">
+              <span class="err">Enter the city.</span></label>
+            <label class="f" data-req>State
+              <input type="text" name="state" autocomplete="address-level1" maxlength="2" placeholder="TX">
+              <span class="err">State?</span></label>
+            <label class="f" data-req data-pattern="^\d{5}(-\d{4})?$">ZIP
+              <input type="text" name="zip" autocomplete="postal-code" inputmode="numeric" maxlength="10">
+              <span class="err">5-digit ZIP.</span></label>
+          </div>
+        </div>
+        <div class="section-h">Where will the car be parked?</div>
+        <div class="choices c2" data-group="spot">
+          <label class="choice"><input type="radio" name="spot" value="Driveway" checked><span><span class="t">Driveway</span></span></label>
+          <label class="choice"><input type="radio" name="spot" value="Garage"><span><span class="t">Garage</span></span></label>
+          <label class="choice"><input type="radio" name="spot" value="Apartment / street parking"><span><span class="t">Apartment / street</span></span></label>
+          <label class="choice"><input type="radio" name="spot" value="Workplace lot"><span><span class="t">Workplace lot</span></span></label>
+        </div>
+      </fieldset>
+
+      <!-- STEP 2: CONTACT -->
+      <fieldset class="panel" data-panel="1">
+        <h2>How do we reach you?</h2>
+        <p class="sub">We'll confirm your appointment and send updates here.</p>
+        <div class="grid">
+          <label class="f" data-req>Full name
+            <input type="text" name="name" autocomplete="name">
+            <span class="err">Enter your name.</span></label>
+          <div class="grid g2">
+            <label class="f" data-req data-pattern="^[^0-9]*(\d[^0-9]*){10,11}$">Mobile phone
+              <input type="tel" name="phone" autocomplete="tel" placeholder="(555) 555-0123">
+              <span class="err">Enter a 10-digit phone number.</span></label>
+            <label class="f" data-req data-pattern="^[^\s@]+@[^\s@]+\.[^\s@]+$">Email
+              <input type="email" name="email" autocomplete="email">
+              <span class="err">Enter a valid email (receipt goes here).</span></label>
+          </div>
+          <div class="grid g2">
+            <label class="f" data-req>Preferred date
+              <input type="date" name="date">
+              <span class="err">Pick a date.</span></label>
+            <label class="f">Time window
+              <select name="time">
+                <option>Morning (8–11am)</option>
+                <option>Midday (11am–2pm)</option>
+                <option>Afternoon (2–5pm)</option>
+                <option>Flexible</option>
+              </select></label>
+          </div>
+        </div>
+        <div class="section-h">Best way to reach you</div>
+        <div class="choices c3">
+          <label class="choice"><input type="radio" name="via" value="Text" checked><span><span class="t">Text</span></span></label>
+          <label class="choice"><input type="radio" name="via" value="Call"><span><span class="t">Call</span></span></label>
+          <label class="choice"><input type="radio" name="via" value="Email"><span><span class="t">Email</span></span></label>
+        </div>
+      </fieldset>
+
+      <!-- STEP 3: VEHICLE + SCOPE OF WORK -->
+      <fieldset class="panel" data-panel="2">
+        <h2>Your car &amp; the problem</h2>
+        <p class="sub">Tell us what's going on, or pick the service you already know you need.</p>
+        <div class="grid g3">
+          <label class="f" data-req data-pattern="^(19|20)\d{2}$">Year
+            <input type="text" name="year" inputmode="numeric" maxlength="4" placeholder="2019">
+            <span class="err">4-digit year.</span></label>
+          <label class="f" data-req>Make
+            <input type="text" name="make" placeholder="Toyota">
+            <span class="err">Make?</span></label>
+          <label class="f" data-req>Model
+            <input type="text" name="model" placeholder="Tacoma">
+            <span class="err">Model?</span></label>
+        </div>
+        <div class="grid g2" style="margin-top:14px">
+          <label class="f">Engine / trim <span class="opt">(optional)</span>
+            <input type="text" name="engine" placeholder="3.5L V6"></label>
+          <label class="f">Mileage <span class="opt">(optional)</span>
+            <input type="text" name="mileage" inputmode="numeric" placeholder="85,000"></label>
+        </div>
+
+        <div class="section-h">Vehicle type</div>
+        <div class="choices c3" id="sizes"></div>
+
+        <div class="section-h">Does it drive?</div>
+        <div class="choices c2">
+          <label class="choice"><input type="radio" name="drivable" value="Drivable" checked><span><span class="t">Yes, it drives</span></span></label>
+          <label class="choice"><input type="radio" name="drivable" value="Not drivable"><span><span class="t">No, it's stuck</span></span></label>
+        </div>
+
+        <div class="section-h">What's going on? <span class="opt">(check any)</span></div>
+        <div class="choices c2" id="symptoms"></div>
+
+        <div class="section-h">Services you know you need <span class="opt">(optional)</span></div>
+        <div class="choices" id="services"></div>
+
+        <div class="section-h">While we're there <span class="opt">(optional)</span></div>
+        <div class="choices c2" id="addons"></div>
+
+        <div class="grid" style="margin-top:16px">
+          <label class="f">Describe the problem <span class="opt">(optional)</span>
+            <textarea name="notes" placeholder="When did it start? Any noises, smells, or warning lights? Anything already replaced?"></textarea></label>
+        </div>
+        <p class="err" id="svcErr" style="margin-top:10px">Check at least one problem or pick a service so we know what to bring.</p>
+
+        <div class="estimate" id="estBox">
+          <div><small id="estLabel">Estimated price</small><span class="big" id="estBig">$0</span></div>
+          <div style="text-align:right;max-width:60%"><small id="estNote">Parts + labor. Final price confirmed on site</small></div>
+        </div>
+      </fieldset>
+
+      <!-- STEP 4: PAYMENT -->
+      <fieldset class="panel" data-panel="3">
+        <h2>Reserve your spot</h2>
+        <p class="sub">Review your booking and choose how you'd like to reserve.</p>
+        <dl class="summary" id="summary"></dl>
+        <div class="pay" id="payOpts">
+          <label class="choice" id="optDeposit">
+            <input type="radio" name="payment" value="deposit">
+            <span><span class="t">Pay deposit</span>
+              <span class="d" id="depDesc"></span></span>
+            <span class="amt" id="depAmt"></span>
+          </label>
+          <label class="choice" id="optDiag">
+            <input type="radio" name="payment" value="diagnosis">
+            <span><span class="t">Diagnosis visit <span class="badge" id="diagBadge" hidden>Recommended</span></span>
+              <span class="d">An ASE-certified tech diagnoses the problem on site and gives you an exact quote. The fee is credited toward the repair if you go ahead.</span></span>
+            <span class="amt" id="diagAmt"></span>
+          </label>
+        </div>
+        <label class="check"><input type="checkbox" name="agree" id="agree">
+          <span>I understand the estimate may change once the tech inspects the car, and that payments are non-refundable within 24 hours of the appointment.</span></label>
+        <p class="formerr" id="payErr"></p>
+      </fieldset>
+
+      <div class="nav" id="nav">
+        <button type="button" class="btn" id="back">Back</button>
+        <button type="submit" class="btn primary" id="next">Continue</button>
+      </div>
+      <p class="note" id="secureNote" hidden>🔒 Payments are processed securely by Stripe.</p>
+    </form>
+
+    <div class="done-panel" id="done" hidden>
+      <div class="icon">✓</div>
+      <h2 id="doneH">You're booked!</h2>
+      <p class="sub" id="doneP">Thanks! Your payment went through. We'll reach out to confirm your appointment time.</p>
+      <button type="button" class="btn" id="restart">Book another car</button>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <p><span id="bizName"></span> · ASE Certified · Licensed &amp; insured<br><span id="bizArea"></span><br>
+  <a id="fbLink" href="#" target="_blank" rel="noopener">Facebook</a> · <a id="mailLink" href="#">Email us</a></p>
+</footer>
+
+<script src="pricing.js"></script>
+<script>
+(function () {
+  var P = window.PRICING, B = P.business;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var form = $("#form"), step = 0, STORE = "docmobile-booking-v2";
+  var money = function (n) { return "$" + Number(n).toLocaleString(); };
+
+  // Business info
+  $("#phoneLink").textContent = B.phone;
+  $("#phoneLink").href = "tel:" + B.phone.replace(/[^\d+]/g, "");
+  $("#bizName").textContent = B.legalName || B.name;
+  $("#bizArea").textContent = B.serviceArea;
+  $("#fbLink").href = B.facebook;
+  $("#mailLink").href = "mailto:" + B.email;
+  $("#diagAmt").textContent = money(P.diagnosisFee);
+
+  // Build option lists from pricing.js
+  function opt(type, name, item, extra) {
+    var price = item.price != null ? '<span class="p">' + (type === "checkbox" && name === "addons" ? "+" : "") + money(item.price) + "</span>" : "";
+    return '<label class="choice"><input type="' + type + '" name="' + name + '" value="' + item.id + '"' + (extra || "") + '><span><span class="t">' +
+      item.name + "</span>" + (item.desc ? '<span class="d">' + item.desc + "</span>" : "") + "</span>" + price + "</label>";
+  }
+  $("#sizes").innerHTML = P.sizes.map(function (s, i) { return opt("radio", "size", s, i ? "" : " checked"); }).join("");
+  $("#symptoms").innerHTML = P.symptoms.map(function (s) { return opt("checkbox", "symptoms", { id: s, name: s }); }).join("");
+  $("#services").innerHTML = P.services.map(function (s) { return opt("checkbox", "services", s); }).join("");
+  $("#addons").innerHTML = P.addons.map(function (s) { return opt("checkbox", "addons", s); }).join("");
+
+  // Minimum date = today
+  var t = new Date(); t.setMinutes(t.getMinutes() - t.getTimezoneOffset());
+  form.date.min = t.toISOString().slice(0, 10);
+
+  function vals(name) { return $$('[name="' + name + '"]:checked').map(function (i) { return i.value; }); }
+  function v(name) { var el = form.elements[name]; if (!el) return ""; if (el.length && !el.tagName) { var c = vals(name); return c[0] || ""; } return el.type === "checkbox" ? (el.checked ? "yes" : "") : el.value.trim(); }
+
+  function data() {
+    return {
+      address: { street: v("street"), unit: v("unit"), city: v("city"), state: v("state").toUpperCase(), zip: v("zip"), notes: v("spot") },
+      contact: { name: v("name"), phone: v("phone"), email: v("email"), date: v("date"), time: v("time"), via: v("via") },
+      vehicle: { year: v("year"), make: v("make"), model: v("model"), engine: v("engine"), mileage: v("mileage"), size: v("size"),
+        drivable: v("drivable"), symptoms: vals("symptoms"), services: vals("services"), addons: vals("addons"), notes: v("notes") },
+      payment: v("payment"),
+    };
+  }
+  function est() { var d = data().vehicle; return P.estimate(d); }
+
+  // Save/restore progress (best-effort)
+  function save() {
+    try {
+      var o = {}; $$("input, select, textarea", form).forEach(function (el) {
+        if (!el.name || el.name === "agree") return;
+        if (el.type === "checkbox" || el.type === "radio") { if (el.checked) (o[el.name] = o[el.name] || []).push(el.value); }
+        else o[el.name] = el.value;
+      });
+      o._step = step; localStorage.setItem(STORE, JSON.stringify(o));
+    } catch (e) {}
+  }
+  function restore() {
+    try {
+      var o = JSON.parse(localStorage.getItem(STORE) || "null"); if (!o) return 0;
+      $$("input, select, textarea", form).forEach(function (el) {
+        if (!el.name || !(el.name in o)) return;
+        if (el.type === "checkbox" || el.type === "radio") el.checked = o[el.name].indexOf(el.value) > -1;
+        else el.value = o[el.name];
+      });
+      // radios that had a default but no saved value stay as-is
+      return Math.min(o._step || 0, 3);
+    } catch (e) { return 0; }
+  }
+
+  function updateEstimate() {
+    var e = est();
+    var sym = vals("symptoms").length;
+    $("#estLabel").textContent = e ? "Estimated repair price" : (sym ? "Start with a diagnosis visit" : "Estimated price");
+    $("#estBig").textContent = e ? money(e.estimate) : (sym ? money(P.diagnosisFee) : "$0");
+    $("#estNote").textContent = e ? "Parts + labor. Final price confirmed on site" + (sym ? ". We'll also check the problems you listed" : "")
+      : (sym ? "Credited toward the repair if you go ahead" : "Parts + labor. Final price confirmed on site");
+  }
+
+  function validate(i) {
+    var ok = true, first = null;
+    $$("[data-req]", $('[data-panel="' + i + '"]')).forEach(function (lab) {
+      var el = $("input, select, textarea", lab), val = el.value.trim(), pat = lab.getAttribute("data-pattern");
+      var bad = !val || (pat && !new RegExp(pat).test(val));
+      lab.classList.toggle("invalid", bad);
+      if (bad) { ok = false; first = first || el; }
+    });
+    if (i === 2) {
+      var none = !vals("services").length && !vals("symptoms").length;
+      $("#svcErr").style.display = none ? "block" : "none";
+      if (none) { ok = false; first = first || $("#services input"); }
+    }
+    if (first) first.focus();
+    return ok;
+  }
+
+  function renderSummary() {
+    var d = data(), e = est(), a = d.address, c = d.contact, vh = d.vehicle;
+    var all = P.services.concat(P.addons), names = vh.services.concat(vh.addons).map(function (id) {
+      for (var k = 0; k < all.length; k++) if (all[k].id === id) return all[k].name; return id; });
+    var esc = function (s) { var x = document.createElement("i"); x.textContent = s; return x.innerHTML; };
+    var row = function (k, val, s) { return "<div><dt>" + k + "</dt><dd>" + esc(val) + ' <button type="button" class="summary-edit" data-go="' + s + '" style="all:unset;color:var(--accent-text);font-size:13px;cursor:pointer;text-decoration:underline">Edit</button></dd></div>'; };
+    $("#summary").innerHTML =
+      row("Where", [a.street, a.unit, a.city, a.state + " " + a.zip].filter(Boolean).join(", "), 0) +
+      row("Who", c.name + " · " + c.phone, 1) +
+      row("When", (c.date ? new Date(c.date + "T12:00").toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" }) : "") + " · " + c.time, 1) +
+      row("Car", [vh.year, vh.make, vh.model, vh.engine].filter(Boolean).join(" ") + " · " + vh.drivable, 2) +
+      (vh.symptoms.length ? row("Problem", vh.symptoms.join(", "), 2) : "") +
+      (names.length ? row("Services", names.join(", "), 2) : "") +
+      (e ? row("Estimate", money(e.estimate), 2) : "");
+
+    var depOpt = $("#optDeposit"), depIn = $("input", depOpt);
+    if (e) {
+      depOpt.classList.remove("disabled"); depIn.disabled = false;
+      $("#depAmt").textContent = money(e.deposit);
+      $("#depDesc").textContent = Math.round(P.depositPercent * 100) + "% of your " + money(e.estimate) + " estimate. Balance due when the job's done.";
+    } else {
+      depOpt.classList.add("disabled"); depIn.disabled = true; depIn.checked = false;
+      $("#depAmt").textContent = "";
+      $("#depDesc").textContent = "Available when you pick a known service in step 3.";
+    }
+    $("#diagBadge").hidden = !vh.symptoms.length;
+    if (!v("payment")) { var pick = (e && !vh.symptoms.length) ? depIn : $("#optDiag input"); pick.checked = true; }
+  }
+
+  function go(i) {
+    step = i;
+    $$(".panel").forEach(function (p) { p.classList.toggle("on", +p.getAttribute("data-panel") === i); });
+    $$("#steps button").forEach(function (b) {
+      var s = +b.getAttribute("data-step");
+      b.classList.toggle("active", s === i); b.classList.toggle("done", s < i);
+    });
+    $("#back").style.display = i === 0 ? "none" : "";
+    $("#next").textContent = i < 3 ? "Continue" : "Pay & reserve";
+    $("#secureNote").hidden = i !== 3;
+    $("#payErr").style.display = "none";
+    if (i === 2) updateEstimate();
+    if (i === 3) { renderSummary(); updatePayBtn(); }
+    save();
+    var app = $("#app"); if (app.getBoundingClientRect().top < 0) app.scrollIntoView({ behavior: "smooth" });
+  }
+
+  function updatePayBtn() {
+    if (step !== 3) return;
+    var e = est(), p = v("payment");
+    $("#next").textContent = "Pay " + (p === "deposit" && e ? money(e.deposit) : money(P.diagnosisFee)) + " & reserve";
+  }
+
+  $("#steps").addEventListener("click", function (ev) {
+    var b = ev.target.closest("button"); if (!b) return;
+    var s = +b.getAttribute("data-step"); if (s < step) go(s);
+  });
+  $("#summary").addEventListener("click", function (ev) {
+    var b = ev.target.closest("[data-go]"); if (b) go(+b.getAttribute("data-go"));
+  });
+  $("#back").addEventListener("click", function () { if (step > 0) go(step - 1); });
+  form.addEventListener("input", function (ev) {
+    var lab = ev.target.closest("[data-req]"); if (lab) lab.classList.remove("invalid");
+    if (ev.target.name === "services" || ev.target.name === "symptoms") $("#svcErr").style.display = "none";
+    updateEstimate(); updatePayBtn(); save();
+  });
+  form.addEventListener("change", function () { updateEstimate(); updatePayBtn(); save(); });
+
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    if (step < 3) { if (validate(step)) go(step + 1); return; }
+    var err = $("#payErr");
+    if (!v("payment")) { err.textContent = "Choose a payment option."; err.style.display = "block"; return; }
+    if (!$("#agree").checked) { err.textContent = "Please check the box to continue."; err.style.display = "block"; return; }
+    err.style.display = "none";
+    var btn = $("#next"); btn.disabled = true; btn.textContent = "Opening secure checkout…";
+    fetch("api/checkout", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data()) })
+      .then(function (r) {
+        // No backend (static preview): treat as demo instead of an error
+        if (!/json/.test(r.headers.get("content-type") || "")) throw { demo: true };
+        return r.json().then(function (j) { if (!r.ok) throw j; return j; });
+      })
+      .then(function (j) { window.location.href = j.url; })
+      .catch(function (e) {
+        btn.disabled = false; updatePayBtn();
+        if (e && e.demo || e instanceof TypeError) return showDone(true);
+        err.textContent = (e && e.error) || "Something went wrong. Please call or text us at " + B.phone + ".";
+        err.style.display = "block";
+      });
+  });
+
+  function showDone(demo) {
+    form.hidden = true; $("#steps").hidden = true; $("#done").hidden = false;
+    if (demo) {
+      $("#doneH").textContent = "Preview: checkout goes here";
+      $("#doneP").textContent = "This preview has no payment backend, so no card was charged. On the live site this button opens Stripe Checkout.";
+    } else {
+      try { localStorage.removeItem(STORE); } catch (e) {}
+    }
+  }
+  $("#restart").addEventListener("click", function () {
+    try { localStorage.removeItem(STORE); } catch (e) {}
+    window.location.href = window.location.pathname;
+  });
+
+  // Returning from Stripe
+  var q = new URLSearchParams(window.location.search);
+  if (q.get("paid")) { showDone(false); return; }
+  go(restore());
+  if (q.get("canceled")) { go(3); var pe = $("#payErr"); pe.textContent = "Checkout was canceled. Nothing was charged. You can try again."; pe.style.display = "block"; }
+})();
+</script>
+</body>
+</html>
